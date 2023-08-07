@@ -1,0 +1,67 @@
+{
+    "family": "ecs-hands-on-for-command",
+    "taskRoleArn": "arn:aws:iam::{AWS_ACCOUNT_ID}:role/ECSTaskRole",
+    "executionRoleArn": "arn:aws:iam::{AWS_ACCOUNT_ID}:role/ECSTaskRole",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "nginx",
+            "image": "{AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/ecs-hands-on/nginx:latest",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "dependsOn": [
+                {
+                    "containerName": "laravel",
+                    "condition": "START"
+                }
+            ],
+            "readonlyRootFilesystem": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "ecs-hands-on",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "nginx"
+                }
+            }
+        },
+        {
+            "name": "laravel",
+            "image": "{AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/ecs-hands-on/laravel:latest",
+            "essential": true,
+            "environment": [
+                {
+                    "name": "APP_ENV",
+                    "value": "production"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "APP_WORD",
+                    "valueFrom": "arn:aws:ssm:us-east-1:{AWS_ACCOUNT_ID}:parameter/APP_WORD"
+                }
+            ],
+            "readonlyRootFilesystem": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "ecs-hands-on",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-datetime-format": "%Y-%m-%d %H:%M:%S",
+                    "awslogs-stream-prefix": "laravel"
+                }
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512"
+}
