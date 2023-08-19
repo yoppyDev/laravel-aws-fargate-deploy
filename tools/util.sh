@@ -3,7 +3,25 @@
 set -u
 . "$(cd "$(dirname "$0")/../" && pwd)/.env"
 
-create-service()
+
+createTaskDefinition()
+{
+    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-command.json --profile ecs-lesson
+    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-web.json --profile ecs-lesson
+}
+
+batch()
+{
+ aws ecs run-task \
+    --cluster ecs-hands-on \
+    --task-definition ecs-hands-on-for-command \
+    --overrides '{"containerOverrides": [{"name":"laravel","command": ["sh","-c","php artisan -v"]}]}' \
+    --launch-type FARGATE \
+    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
+    --profile ecs-lesson
+}
+
+deploy()
 {
  aws ecs create-service \
     --cluster ecs-hands-on \
@@ -11,12 +29,26 @@ create-service()
     --task-definition ecs-hands-on-for-web \
     --launch-type FARGATE \
     --desired-count 1 \
-    --network-configuration "awsvpcConfiguration={subnets=${SUBNET},securityGroups=${SECURITY_GROUP},assignPublicIp=ENABLED}" \
+    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
     --profile ecs-lesson
 }
 
+updateService()
+{
+    aws ecs update-service \
+        --cluster ecs-hands-on \
+        --service ecs-hands-on-laravel \
+        --task-definition ecs-hands-on-for-web \
+        --profile ecs-lesson
+}
+
+
 build()
 {
+    docker build --platform=linux/amd64 \
+        -t ${IMAGE_TAG}/composer:latest \
+        -f ./docker/composer/Dockerfile .
+
     docker build --platform=linux/amd64 \
         -t ${IMAGE_TAG}/laravel:latest \
         -f ./docker/laravel/Dockerfile .
