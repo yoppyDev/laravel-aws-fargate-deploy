@@ -5,9 +5,17 @@ RUN apt-get update
 RUN npm install \
     && npm run prod
 
-FROM nginx:1.19.2
+
+FROM nginx:alpine
+
 WORKDIR /application
-RUN apt-get update
-COPY ./docker/nginx/ecs/conf.d/default.conf /etc/nginx/conf.d/default.conf
+
+COPY ./docker/nginx/conf/default.conf /etc/nginx/conf.d/
+ADD ./docker/nginx/conf/nginx.conf /etc/nginx/
+
+COPY ./src /application
 COPY --from=node-build /application/public /application/public/
+
+ENV TZ=Asia/Tokyo
+
 EXPOSE 80
