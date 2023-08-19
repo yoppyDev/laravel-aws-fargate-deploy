@@ -17,7 +17,7 @@ batch()
     --task-definition ecs-hands-on-for-command \
     --overrides '{"containerOverrides": [{"name":"laravel","command": ["sh","-c","php artisan -v"]}]}' \
     --launch-type FARGATE \
-    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
+--network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
     --profile ecs-lesson
 }
 
@@ -29,8 +29,22 @@ deploy()
     --task-definition ecs-hands-on-for-web \
     --launch-type FARGATE \
     --desired-count 1 \
-    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
+--network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
     --profile ecs-lesson
+}
+
+
+arnDeploy()
+{
+    aws ecs create-service \
+        --cluster ecs-hands-on \
+        --service-name ecs-hands-on-laravel \
+        --task-definition ecs-hands-on-for-web \
+        --launch-type FARGATE \
+        --load-balancers `[{"containerName":"nginx","containerPort":80,"targetGroupArn":"${TARGET_GROUP_ARN}"}]` \
+        --desired-count 2 \
+        --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
+        --profile ecs-lesson
 }
 
 updateService()
