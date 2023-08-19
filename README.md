@@ -1,4 +1,9 @@
-**ECRプッシュ**
+## Deploy Laravel on AWS using Fargate
+![infrastructure-overview](images/infrastructure.png)
+
+## Tools
+
+**ECR push**
 ```
 sh tools/aws-ecr-login.sh
 
@@ -6,18 +11,18 @@ sh tools/util.sh build
 sh tools/util.sh push
 ```
 
-**タスク定義**
+**Task Definition**
 ```
 sh tools/util.sh createTaskDefinition
 ```
 
-**バッチ処理**
+**Run Batch**
 ```
 sh tools/util.sh batch
 ```
 
 
-**デプロイ**
+**Deploy**
 ```
 sh tools/util.sh deploy
 ```
