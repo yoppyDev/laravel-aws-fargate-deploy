@@ -6,7 +6,7 @@
     "containerDefinitions": [
         {
             "name": "laravel",
-            "image": "{AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/ecs-hands-on/laravel:latest",
+            "image": "{AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/ecs-hands-on/laravel:latest",
             "essential": true,
             "environment": [
                 {
@@ -17,7 +17,7 @@
             "secrets": [
                 {
                     "name": "APP_WORD",
-                    "valueFrom": "arn:aws:ssm:us-east-1:{AWS_ACCOUNT_ID}:parameter/APP_WORD"
+                    "valueFrom": "arn:aws:ssm:ap-northeast-1:{AWS_ACCOUNT_ID}:parameter/APP_WORD"
                 }
             ],
             "readonlyRootFilesystem": true,
@@ -25,7 +25,7 @@
                 "logDriver": "awslogs",
                 "options": {
                     "awslogs-group": "ecs-hands-on",
-                    "awslogs-region": "us-east-1",
+                    "awslogs-region": "ap-northeast-1",
                     "awslogs-datetime-format": "%Y-%m-%d %H:%M:%S",
                     "awslogs-stream-prefix": "laravel"
                 }
