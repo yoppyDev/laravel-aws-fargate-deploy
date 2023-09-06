@@ -1,5 +1,5 @@
 {
-    "family": "ecs-hands-on-for-command",
+    "family": "ecs-hands-on-for-web",
     "taskRoleArn": "arn:aws:iam::{AWS_ACCOUNT_ID}:role/ECSTaskRole",
     "executionRoleArn": "arn:aws:iam::{AWS_ACCOUNT_ID}:role/ECSTaskRole",
     "networkMode": "awsvpc",
@@ -21,7 +21,6 @@
                     "condition": "START"
                 }
             ],
-            "readonlyRootFilesystem": true,
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -47,7 +46,6 @@
                     "valueFrom": "arn:aws:ssm:ap-northeast-1:{AWS_ACCOUNT_ID}:parameter/APP_WORD"
                 }
             ],
-            "readonlyRootFilesystem": true,
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {

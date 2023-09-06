@@ -6,8 +6,8 @@ set -u
 
 createTaskDefinition()
 {
-    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-command.json --profile ecs-lesson
-    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-web.json --profile ecs-lesson
+    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-command.json
+    aws ecs register-task-definition --cli-input-json file://ecs-task-definition-for-web.json
 }
 
 batch()
@@ -17,8 +17,7 @@ batch()
     --task-definition ecs-hands-on-for-command \
     --overrides '{"containerOverrides": [{"name":"laravel","command": ["sh","-c","php artisan -v"]}]}' \
     --launch-type FARGATE \
---network-configuration "awsvpcConfiguration={subnets=[${SUBNET}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
-    --profile ecs-lesson
+    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}"
 }
 
 deploy()
@@ -29,8 +28,7 @@ deploy()
     --task-definition ecs-hands-on-for-web \
     --launch-type FARGATE \
     --desired-count 1 \
---network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
-    --profile ecs-lesson
+    --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}"
 }
 
 
@@ -43,8 +41,7 @@ arnDeploy()
         --launch-type FARGATE \
         --load-balancers `[{"containerName":"nginx","containerPort":80,"targetGroupArn":"${TARGET_GROUP_ARN}"}]` \
         --desired-count 2 \
-        --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}" \
-        --profile ecs-lesson
+        --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SECURITY_GROUP}],assignPublicIp=ENABLED}"
 }
 
 updateService()
@@ -52,8 +49,7 @@ updateService()
     aws ecs update-service \
         --cluster ecs-hands-on \
         --service ecs-hands-on-laravel \
-        --task-definition ecs-hands-on-for-web \
-        --profile ecs-lesson
+        --task-definition ecs-hands-on-for-web
 }
 
 
